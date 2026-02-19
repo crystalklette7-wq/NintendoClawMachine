@@ -1,0 +1,44 @@
+name: Build CIA
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install devkitPro
+      run: |
+        sudo apt update
+        sudo apt install -y wget
+        wget https://apt.devkitpro.org/install-devkitpro-pacman
+        chmod +x install-devkitpro-pacman
+        sudo ./install-devkitpro-pacman
+        sudo dkp-pacman -S --noconfirm devkitARM 3ds-dev
+
+    - name: Set environment
+      run: |
+        echo "DEVKITPRO=/opt/devkitpro" >> $GITHUB_ENV
+        echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
+        echo "/opt/devkitpro/tools/bin" >> $GITHUB_PATH
+
+    - name: Build
+      run: make
+
+    - name: Create CIA
+      run: |
+        makerom -f cia \
+          -o NintendoClawMachine.cia \
+          -rsf NintendoClawMachine.rsf \
+          -elf NintendoClawMachine.elf \
+          -exefslogo
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: CIA
+        path: NintendoClawMachine.cia
