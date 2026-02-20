@@ -18,13 +18,13 @@ jobs:
         run: make
 
       - name: Upload CIA
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: BigBang3D-CIA
           path: BigBang3D.cia
 
       - name: Upload 3DSX
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: BigBang3D-3DSX
           path: BigBang3D.3ds
