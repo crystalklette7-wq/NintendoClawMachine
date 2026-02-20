@@ -1,8 +1,7 @@
-name: Build CIA
+name: Build 3DS CIA
 
 on:
   push:
-    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -10,35 +9,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install devkitPro
-      run: |
-        sudo apt update
-        sudo apt install -y wget
-        wget https://apt.devkitpro.org/install-devkitpro-pacman
-        chmod +x install-devkitpro-pacman
-        sudo ./install-devkitpro-pacman
-        sudo dkp-pacman -S --noconfirm devkitARM 3ds-dev
+      - name: Install devkitPro
+        run: |
+          sudo apt update
+          sudo apt install -y wget
+          wget https://apt.devkitpro.org/install-devkitpro-pacman
+          chmod +x install-devkitpro-pacman
+          sudo ./install-devkitpro-pacman
+          sudo dkp-pacman -S 3ds-dev --noconfirm
 
-    - name: Set environment
-      run: |
-        echo "DEVKITPRO=/opt/devkitpro" >> $GITHUB_ENV
-        echo "DEVKITARM=/opt/devkitpro/devkitARM" >> $GITHUB_ENV
-        echo "/opt/devkitpro/tools/bin" >> $GITHUB_PATH
+      - name: Build CIA
+        run: |
+          export DEVKITPRO=/opt/devkitpro
+          export DEVKITARM=$DEVKITPRO/devkitARM
+          make
 
-    - name: Build
-      run: make
-
-    - name: Create CIA
-      run: |
-        makerom -f cia \
-          -o NintendoClawMachine.cia \
-          -rsf NintendoClawMachine.rsf \
-          -elf NintendoClawMachine.elf \
-          -exefslogo
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: CIA
-        path: NintendoClawMachine.cia
+      - name: Upload CIA
+        uses: actions/upload-artifact@v4
+        with:
+          name: cia
+          path: "*.cia"
