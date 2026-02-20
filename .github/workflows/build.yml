@@ -1,33 +1,11 @@
-name: Build 3DS CIA
+TARGET := BigBang3D
+BUILD := build
+SOURCES := source
 
-on:
-  push:
-  workflow_dispatch:
+APP_TITLE := Big Bang 3D
+APP_DESCRIPTION := Neon arcade explosion
+APP_AUTHOR := YourName
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+LIBS := -lctru -lcitro2d -lcitro3d -lm
 
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install devkitPro
-        run: |
-          sudo apt update
-          sudo apt install -y wget
-          wget https://apt.devkitpro.org/install-devkitpro-pacman
-          chmod +x install-devkitpro-pacman
-          sudo ./install-devkitpro-pacman
-          sudo dkp-pacman -S 3ds-dev --noconfirm
-
-      - name: Build CIA
-        run: |
-          export DEVKITPRO=/opt/devkitpro
-          export DEVKITARM=$DEVKITPRO/devkitARM
-          make
-
-      - name: Upload CIA
-        uses: actions/upload-artifact@v4
-        with:
-          name: cia
-          path: "*.cia"
+include $(DEVKITPRO)/libctru/base_rules
