@@ -1,11 +1,30 @@
-TARGET := BigBang3D
-BUILD := build
-SOURCES := source
+name: Build 3DS App
 
-APP_TITLE := Big Bang 3D
-APP_DESCRIPTION := Neon arcade explosion
-APP_AUTHOR := YourName
+on:
+  push:
+  pull_request:
 
-LIBS := -lctru -lcitro2d -lcitro3d -lm
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-include $(DEVKITPRO)/libctru/base_rules
+    container:
+      image: devkitpro/devkitarm
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: make
+
+      - name: Upload CIA
+        uses: actions/upload-artifact@v3
+        with:
+          name: BigBang3D-CIA
+          path: BigBang3D.cia
+
+      - name: Upload 3DSX
+        uses: actions/upload-artifact@v3
+        with:
+          name: BigBang3D-3DSX
+          path: BigBang3D.3ds
