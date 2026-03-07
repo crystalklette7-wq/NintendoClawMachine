@@ -1,75 +1,8 @@
-/*
-NintendoClawMachine - minimal 3DS CIA launcher
-Launches Nintendo Badge Arcade
-*/
 
-#include <3ds.h>
-#include <stdio.h>
-
-int main(int argc, char **argv)
-{
-    // Initialize graphics
-    gfxInitDefault();
-    consoleInit(GFX_TOP, NULL);
-
-    printf("NintendoClawMachine\n");
-    printf("Launching Badge Arcade...\n");
-    printf("Press START if it does not launch.");
-
-    // Badge Arcade Title ID
-    u64 titleID = 0x00040000001B5100;
-
-    // Attempt to jump to Badge Arcade
-    APT_PrepareToDoApplicationJump(0, titleID, 0);
-    APT_DoApplicationJump(NULL, NULL, 0);
-
-    // Basic loop
-    while (aptMainLoop())
-    {
-        hidScanInput();
-
-        u32 kDown = hidKeysDown();
-
-        if (kDown & KEY_START)
-            break;
-
-        gfxFlushBuffers();
-        gfxSwapBuffers();
-        gspWaitForVBlank();
-    }
-
-    gfxExit();
-    return 0;
-}
-
-/*
-Minimal Makefile logic (conceptual)
-
-TARGET := NintendoClawMachine
-SOURCES := source
-LIBS := -lctru -lm
-
-include $(DEVKITARM)/3ds_rules
-*/
-
-/*
-GitHub workflow concept
-
-name: Build CIA
-
-on: [push]
-
-jobs:
- build:
-  runs-on: ubuntu-latest
-
-  steps:
-   - uses: actions/checkout@v4
-
-   - name: Install devkitPro
-     run: |
-       sudo dkp-pacman -S 3ds-dev --noconfirm
-
-   - name: Build
-     run: make
-*/
+NintendoClawMachine
+ ├─ source
+ │   └─ main.c
+ ├─ Makefile
+ └─ .github
+     └─ workflows
+         └─ build.yml
