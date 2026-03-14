@@ -1,8 +1,36 @@
+name: Build 3DS Homebrew
 
-NintendoClawMachine
- ├─ source
- │   └─ main.c
- ├─ Makefile
- └─ .github
-     └─ workflows
-         └─ build.yml
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install devkitPro
+        run: |
+          sudo apt update
+          sudo apt install -y wget
+          wget https://apt.devkitpro.org/install-devkitpro-pacman
+          chmod +x install-devkitpro-pacman
+          sudo ./install-devkitpro-pacman
+          sudo dkp-pacman -S 3ds-dev --noconfirm
+
+      - name: Build
+        run: |
+          export DEVKITPRO=/opt/devkitpro
+          export DEVKITARM=$DEVKITPRO/devkitARM
+          make
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: NintendoClawMachine
+          path: |
+            *.3dsx
+            *.cia
