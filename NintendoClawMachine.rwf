@@ -1,0 +1,8 @@
+BasicInfo:
+  Title: NintendoClawMachine
+  CompanyCode: "00"
+  ProductCode: CTR-P-NCLM
+  ContentType: Application
+
+SystemControlInfo:
+  StackSize: 0x4000
